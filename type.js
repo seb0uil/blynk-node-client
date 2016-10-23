@@ -18,6 +18,8 @@ var getCommandByString = function(cmdString) {
             return MsgType.HARDWARE;
         case "loadprofilegzipped" :
             return MsgType.LOAD_PROFILE_GZIPPED;
+        default:
+            return cmdString;
     }
 }
 

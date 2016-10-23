@@ -1,0 +1,20 @@
+{
+  "name": "blynk-client",
+  "version": "0.0.1",
+  "license": "GPL-3.0",
+  "author": {
+    "name": "seb0uil"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seb0uil/blynk-node-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seb0uil/blynk-node-client/issues"
+  },
+  "keywords": "blynk ",
+  "dependencies": {
+    "crypto": "0.0.3",
+    "tls": "0.0.1"
+  }
+}

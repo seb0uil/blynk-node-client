@@ -1,3 +1,5 @@
+'use strict';
+
 var tls = require('tls');
 var MsgType = require('./type.js').MsgType;
 var Message = require('./message.js');
@@ -20,13 +22,13 @@ parent.send = function(data) {
     parent.socket.write(message);
 };
 
-disconnect = function() {
+var disconnect = function() {
     return new Promise(function (resolve, reject) {
         resolve('done');
     });
 };
 
-connect = function(login, pwd, host, port) {
+var connect = function(login, pwd, host, port) {
     var innerConnect = function(host, port) {
         return new Promise(function (resolve, reject) {
             parent.socket = tls.connect(port, host, options,resolve);
@@ -49,11 +51,15 @@ connect = function(login, pwd, host, port) {
             var r =	parent.respPromises.get(msgId);
 
             var innerResolve = function(msgType, fields, resp, result) {
+                var dashId;
                 if (typeof r !== 'undefined') {
                     r.resolve(fields);
                 }
 
                 resp.trim && (resp = resp.trim());
+
+                dashId = resp.substr(0, 1);
+
                 /* Emit generic message */
                 event.emit('message', result, fields, resp);
                 /* Emit message for type */
@@ -64,14 +70,13 @@ connect = function(login, pwd, host, port) {
                 }
                 /* Emit message for dashboard update */
                 try {
-                    var dashId = resp.substr(0, 1);
                     event.emit('dash' + dashId, result, fields, resp);
                 } catch (e) {
                     event.emit('message', result, fields, resp);
                 }
                 /* Emit specific message for pin (d1, v5 etc..) */
                 try {
-                    var trigger = resp.substr(2, 1) + resp.substr(5, 1);
+                    var trigger = dashId + resp.substr(2, 1) + resp.substr(5, 1);
                     event.emit(trigger, result, fields, resp);
                 } catch (e) {
                     event.emit('message', result, fields, resp);
@@ -136,7 +141,7 @@ function sendQ(command) {
     })
 }
 
-hardware = function(dashboardId, pinType, pinCommand, pinId, pinValue) {
+var hardware = function(dashboardId, pinType, pinCommand, pinId, pinValue) {
     var command = "hardware " + dashboardId + " " + pinType + pinCommand + " " + pinId;
     if (pinValue != undefined)
         command = command + " " + pinValue;
@@ -152,29 +157,33 @@ hardware = function(dashboardId, pinType, pinCommand, pinId, pinValue) {
     };
 };
 
-getToken = function(dashboardId) {
+var getToken = function(dashboardId) {
     var command = "getToken " + dashboardId;
     return sendQ(command)
 };
 
-activate = function(dashboardId) {
+var activate = function(dashboardId) {
     var command = "activate " + dashboardId;
     return sendQ(command);
 };
 
-profile = function() {
+var profile = function() {
     var command = "activate " + dashboardId;
     return sendQ(command);
 };
 
-notify = function(message) {
+var notify = function(message) {
     var command = MsgType.NOTIFY + [message];
     return sendQ(command);
 };
 
-sync = function(dashboardId) {
-    var command = "sync";
+var ping = function() {
+    var command = "ping";
     return sendQ(command);
+};
+
+var raw= function(raw) {
+    return sendQ(raw);
 };
 
 exports.getToken = getToken;
@@ -182,6 +191,7 @@ exports.connect = connect;
 exports.disconnect = disconnect;
 exports.hardware = hardware;
 exports.activate = activate;
-exports.sync = sync;
+exports.ping = ping;
 exports.notify = notify;
 exports.event = event;
+exports.raw = raw;

@@ -1,3 +1,5 @@
+'use strict';
+
 var getCommandByString = function(cmdString) {
     switch (cmdString) {
         case "ping" :

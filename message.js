@@ -1,3 +1,5 @@
+'use strict';
+
 var crypto = require('crypto');
 var MsgType = require('./type.js').MsgType;
 var Type = require('./type.js');

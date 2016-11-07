@@ -16,10 +16,14 @@ var event = new EventEmitter();
 
 parent.respPromises = new Map();
 
-parent.send = function(data) {
+parent.send = function(data, resolve, reject) {
     var commandAndBody = data.split(" ");
     var message = Message.createMessage(commandAndBody, msgId++);
-    parent.socket.write(message);
+    parent.socket.write(message, function(err) {
+      if (err) {
+        reject(err);
+      }
+    });
 };
 
 var disconnect = function() {
@@ -137,7 +141,7 @@ function sendQ(command) {
             "resolve": resolve,
             "reject": reject
         });
-        parent.send(command);
+        parent.send(command, resolve, reject);
     })
 }
 

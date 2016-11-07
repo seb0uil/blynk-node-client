@@ -50,6 +50,10 @@ var connect = function(login, pwd, host, port) {
                 parent.send('login ' + login + ' ' + pwd)
             );
 
+        parent.socket.on('error', function(err) {
+            reject(err);
+        });
+
         parent.socket.on('data', function(data) {
             var msgId = data.readUInt16BE(1);
             var r =	parent.respPromises.get(msgId);

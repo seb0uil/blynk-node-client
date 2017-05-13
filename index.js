@@ -153,7 +153,13 @@ function sendQ(command) {
 var hardware = function(dashboardId, pinType, pinCommand, pinId, pinValue) {
     var command = "hardware " + dashboardId + " " + pinType + pinCommand + " " + pinId;
     if (pinValue != undefined)
-        command = command + " " + pinValue;
+        if (Array.isArray(pinValue)) {
+            for (var i=0; i<pinValue.length; i++) {
+                command = command + " " + pinValue[i];
+            }
+        } else {
+            command = command + " " + pinValue;
+        }
     if (pinCommand === 'r') {
         return sendQ(command)
     } else {

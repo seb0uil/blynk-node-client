@@ -28,6 +28,7 @@ parent.send = function(data, resolve, reject) {
 
 var disconnect = function() {
     return new Promise(function (resolve, reject) {
+        parent.socket.end();
         resolve('done');
     });
 };
